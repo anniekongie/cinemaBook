@@ -1,0 +1,32 @@
+from django.shortcuts import render
+
+# booking/views.py
+from django.contrib.auth.forms import UserCreationForm
+from django.urls import reverse_lazy
+from django.views import generic
+from django.contrib.auth.models import User
+
+from django.views.generic.edit import FormView
+from booking.forms import SignUpForm
+
+class SignUp(generic.CreateView):
+    form_class = UserCreationForm
+    success_url = reverse_lazy('login')
+    template_name = 'signup.html'
+
+
+class SignUpFormView(FormView):
+    form_class = SignUpForm
+    success_url= reverse_lazy('signup')
+    template_name = 'signup.html'
+    
+    def form_valid(self,form):
+        user = User.objects.create_user(form.cleaned_data['first_name'],
+                                        form.cleaned_data['last_name'],
+                                        form.cleaned_data['email'], 
+                                        form.cleaned_data['password'])
+        user.is_active = False
+        user.save()
+        user.is_active=False
+        user.save()
+        mail = render_to_string()
